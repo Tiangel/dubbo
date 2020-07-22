@@ -47,9 +47,11 @@ public class RouterChain<T> {
     }
 
     private RouterChain(URL url) {
+        // 获取SPI注册的所有路由工厂，@Activate注解声明的RouterFactory
         List<RouterFactory> extensionFactories = ExtensionLoader.getExtensionLoader(RouterFactory.class)
                 .getActivateExtension(url, "router");
 
+        // 遍历SPI注册的路由工厂，由路由工厂创建路由器
         List<Router> routers = extensionFactories.stream()
                 .map(factory -> factory.getRouter(url))
                 .collect(Collectors.toList());
@@ -95,6 +97,7 @@ public class RouterChain<T> {
      */
     public List<Invoker<T>> route(URL url, Invocation invocation) {
         List<Invoker<T>> finalInvokers = invokers;
+        // 按排好序的顺序调用路由方法
         for (Router router : routers) {
             finalInvokers = router.route(finalInvokers, url, invocation);
         }
@@ -104,6 +107,8 @@ public class RouterChain<T> {
     /**
      * Notify router chain of the initial addresses from registry at the first time.
      * Notify whenever addresses in registry change.
+     * 由注册目录（RegistryDirectory）调用更新
+     * @param invokers 当前注册在注册中心的所有可用提供者
      */
     public void setInvokers(List<Invoker<T>> invokers) {
         this.invokers = (invokers == null ? Collections.emptyList() : invokers);

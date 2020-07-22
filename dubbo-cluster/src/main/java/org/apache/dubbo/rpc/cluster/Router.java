@@ -44,7 +44,7 @@ public interface Router extends Comparable<Router> {
 
     /**
      * Filter invokers with current routing rule and only return the invokers that comply with the rule.
-     *
+     * 过滤，返回可用的服务提供者
      * @param invokers   invoker list
      * @param url        refer url
      * @param invocation invocation
@@ -57,7 +57,7 @@ public interface Router extends Comparable<Router> {
     /**
      * Notify the router the invoker list. Invoker list may change from time to time. This method gives the router a
      * chance to prepare before {@link Router#route(List, URL, Invocation)} gets called.
-     *
+     * 订阅到注册中心事件时被调用 （由路由器链RouterChain调用）
      * @param invokers invoker list
      * @param <T>      invoker's type
      */
